@@ -1,0 +1,10 @@
+/challenges
+/course_material
+
+/03-pizza-menu/node_modules
+/03-pizza-menu/package-lock.json
+
+/04-steps/node_modules
+/04-steps/package-lock.json
+
+.DS_Store
