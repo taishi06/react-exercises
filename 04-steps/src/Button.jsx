@@ -2,9 +2,10 @@ function Button(props) {
 	return (
 		<button
 			onClick={props.onClick}
-			style={{ backgroundColor: '#7950F2', color: '#fff' }}
+			className={props.class ? props.class : ''}
+			style={'btnStyles' in props ? props.btnStyles : {}}
 		>
-			{props.btnText}
+			{props.children}
 		</button>
 	);
 }
