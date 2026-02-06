@@ -7,4 +7,7 @@
 /04-steps/node_modules
 /04-steps/package-lock.json
 
+/05-travel-list/node_modules
+/05-travel-list/package-lock.json
+
 .DS_Store
