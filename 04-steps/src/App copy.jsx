@@ -53,10 +53,10 @@ function App() {
 
 					<div className="buttons">
 						<Button onClick={handlePrevious} btnStyles={btnStyles}>
-							👈 Previous
+							Previous
 						</Button>
 						<Button onClick={handleNext} btnStyles={btnStyles}>
-							Next 👉
+							Next
 						</Button>
 					</div>
 				</div>

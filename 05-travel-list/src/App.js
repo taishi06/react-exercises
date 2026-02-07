@@ -17,8 +17,8 @@ function App() {
 		<div className="app">
 			<Logo />
 			<Form setItems={setItems} />
-			<PackingList items={items} />
-			<Stats />
+			<PackingList items={items} setItems={setItems} />
+			<Stats items={items} />
 		</div>
 	);
 }
