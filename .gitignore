@@ -10,4 +10,7 @@
 /05-travel-list/node_modules
 /05-travel-list/package-lock.json
 
+/06-eat-n-split/node_modules
+/06-eat-n-split/package-lock.json
+
 .DS_Store
