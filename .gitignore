@@ -13,4 +13,10 @@
 /06-eat-n-split/node_modules
 /06-eat-n-split/package-lock.json
 
+/07-usepopcorn/node_modules
+/07-usepopcorn/package-lock.json
+
+/08-how-react-works/node_modules
+/08-how-react-works/package-lock.json
+
 .DS_Store
