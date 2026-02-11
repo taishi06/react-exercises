@@ -15,6 +15,7 @@
 
 /07-usepopcorn/node_modules
 /07-usepopcorn/package-lock.json
+/07-usepopcorn/.env
 
 /08-how-react-works/node_modules
 /08-how-react-works/package-lock.json
