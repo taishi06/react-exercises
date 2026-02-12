@@ -8,6 +8,11 @@ class Weather extends React.Component {
 	// 	this.state = { displayLocation: '', weather: {} };
 	// }
 
+	// when component unmounts
+	componentWillUnmount() {
+		console.log('Weather is unmounting...');
+	}
+
 	render() {
 		const {
 			displayLocation,

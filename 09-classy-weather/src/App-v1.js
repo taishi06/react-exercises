@@ -1,6 +1,5 @@
 import React from 'react';
 import Weather from './Weather';
-import Input from './Input';
 
 function convertToFlag(countryCode) {
 	const codePoints = countryCode
@@ -11,39 +10,20 @@ function convertToFlag(countryCode) {
 }
 
 class App extends React.Component {
-	state = {
-		location: '',
-		isLoading: false,
-		displayLocation: '',
-		weather: {},
-	};
+	constructor(props) {
+		super();
 
-	/**
-	 * Lifecycle Methods
-	 */
-	// as component renders completely - once
-	componentDidMount() {
-		// this.fetchWeather();
-		this.setState({ location: localStorage.getItem('location') || '' });
+		this.state = {
+			location: 'lisbon',
+			isLoading: false,
+			displayLocation: '',
+			weather: {},
+		};
+
+		this.fetchWeather = this.fetchWeather.bind(this);
 	}
-	// re-renders - useEffect with dependency array
-	componentDidUpdate(prevProps, prevState) {
-		if (this.state.location !== prevState.location) {
-			this.fetchWeather();
 
-			localStorage.setItem('location', this.state.location);
-		}
-	}
-	/**
-	 * End Lifecycle Methods
-	 */
-
-	// async fetchWeather() {
-	// no need for binding
-	fetchWeather = async () => {
-		if (this.state.location.length < 2)
-			return this.setState({ weather: {} });
-
+	async fetchWeather() {
 		try {
 			this.setState({ isLoading: true });
 
@@ -73,26 +53,29 @@ class App extends React.Component {
 		} finally {
 			this.setState({ isLoading: false });
 		}
-	};
-
-	setLocation = (e) => this.setState({ location: e.target.value });
+	}
 
 	render() {
 		return (
 			<div className="app">
 				<h1>Classy Weather</h1>
-
-				<Input
-					location={this.state.location}
-					onChangeLocation={this.setLocation}
-				/>
-
+				<div>
+					<input
+						type="text"
+						placeholder="Search for location..."
+						value={this.state.location}
+						onChange={(e) =>
+							this.setState({ location: e.target.value })
+						}
+						disabled={this.state.isLoading}
+					/>
+				</div>
 				{!this.state.isLoading && (
 					<button onClick={this.fetchWeather}>Get weather</button>
 				)}
 				{this.state.isLoading && <p className="loader">Loading...</p>}
 
-				{this.state.weather.weathercode && !this.state.isLoading && (
+				{this.state.weather.weathercode && (
 					<Weather
 						displayLocation={this.state.displayLocation}
 						weather={this.state.weather}
