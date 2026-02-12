@@ -20,4 +20,7 @@
 /08-how-react-works/node_modules
 /08-how-react-works/package-lock.json
 
+/08-classy-weather/node_modules
+/08-classy-weather/package-lock.json
+
 .DS_Store
