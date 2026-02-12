@@ -1,20 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Loader from './Loader';
 import StarRating from './StarRating';
 import ErrorMessage from './ErrorMessage';
 import { getMovie } from './helper';
+import { useKeydown } from './hooks/useKey';
 
 function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 	const [movie, setMovie] = useState({});
 	const [isLoading, setIsLoading] = useState(false);
+	const [avgRating, setAvgRating] = useState(0);
 	const [error, setError] = useState(null);
-	const [isWatched, setIsWatched] = useState(
-		!!watched.filter((wm) => wm.imdbID === selectedId).length,
-	);
+
+	const rateCounterRef = useRef(0);
+
+	const isWatched = watched.map((movie) => movie.imdbID).includes(selectedId);
 	const watchedUserRating = watched.find(
 		(movie) => movie.imdbID === selectedId,
 	)?.userRating;
 
+	// destructuring using a different variable name should be like this - sourceKey: variableName
 	const {
 		imdbID,
 		Title: title,
@@ -29,19 +33,10 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 		Genre: genre,
 	} = movie;
 
-	// global keypress event
-	useEffect(() => {
-		const keydownCallback = (e) => {
-			// escape key pressed
-			if (e.code === 'Escape') {
-				onCloseMovie();
-			}
-		};
-		document.addEventListener('keydown', keydownCallback);
+	// Escape key press event
+	useKeydown('Escape', onCloseMovie);
 
-		return () => document.removeEventListener('keydown', keydownCallback);
-	}, [onCloseMovie]);
-
+	// set page title
 	useEffect(() => {
 		if (!title && !imdbRating) {
 			return;
@@ -51,6 +46,7 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 		return () => (document.title = 'usePopcorn');
 	}, [title, imdbRating]);
 
+	// fetch movie details
 	useEffect(() => {
 		setError(null);
 		setIsLoading(true);
@@ -78,8 +74,39 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 		};
 	}, [selectedId]);
 
-	const handleSetRating = (rating) => {
-		const watched = {
+	// set average rating
+	useEffect(() => {
+		if (imdbRating && watchedUserRating) {
+			setAvgRating(Number(imdbRating));
+			setAvgRating((avgRating) => (avgRating + watchedUserRating) / 2);
+		}
+
+		return () => {
+			setAvgRating(0);
+		};
+	}, [imdbRating, watchedUserRating]);
+
+	// set count rating
+	useEffect(() => {
+		const currentWatched = watched.find((w) => w.imdbID === selectedId);
+
+		// check if watched has user rating already
+		if (currentWatched?.countRating) {
+			rateCounterRef.current = currentWatched.countRating;
+		}
+	}, [watched, selectedId]);
+
+	function handleSetRating(rating) {
+		setAvgRating(Number(imdbRating));
+		setAvgRating((avgRating) => (avgRating + rating) / 2);
+
+		let rateCountRef = rateCounterRef.current + 1;
+		// if user has rated before
+		if (watched.find((w) => w.imdbID === selectedId)?.userRating) {
+			rateCountRef = rateCountRef + 1;
+		}
+
+		const watchedMovie = {
 			userRating: rating,
 			imdbID,
 			Title: title,
@@ -87,16 +114,16 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 			Poster: poster,
 			runtime: runtime.includes('min') ? runtime.split(' ')[0] : runtime,
 			imdbRating: Number(imdbRating),
+			countRating: rateCountRef,
 		};
-		onWatched(watched);
-		setIsWatched(true);
-	};
+		onWatched(watchedMovie);
+	}
 
-	const handleAdd = () => {
+	function handleAdd() {
 		// since we're just adding initially
 		handleSetRating(0);
 		onCloseMovie();
-	};
+	}
 
 	return (
 		<>
@@ -153,6 +180,11 @@ function MovieDetails({ watched, selectedId, onCloseMovie, onWatched }) {
 								</p>
 								<p>Starring {actors}</p>
 								<p>Directed by {director}</p>
+								{watchedUserRating > 0 && (
+									<p>
+										Average Rating: {avgRating.toFixed(2)}
+									</p>
+								)}
 							</section>
 						</div>
 					)}

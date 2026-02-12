@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NavBar from './NavBar';
 import NumResults from './NumResults';
 import Main from './Main';
@@ -10,47 +10,90 @@ import Box from './Box';
 import Loader from './Loader';
 import ErrorMessage from './ErrorMessage';
 import MovieDetails from './MovieDetails';
-import { useMovies } from './hooks/useMovies';
-import { useLocalStorage } from './hooks/useLocalStorage';
+import { getMovies } from './helper';
 
 export default function App() {
 	const [query, setQuery] = useState('');
-	const { movies, isLoading, error } = useMovies(query);
-	const [watched, setWatched] = useLocalStorage([], 'watched');
+	const [movies, setMovies] = useState([]);
+	const [watched, setWatched] = useState([]);
+	const [isLoading, setIsLoading] = useState(false);
 	const [selectedId, setSelectedId] = useState(null);
 
-	function handleSelectedId(movieId) {
+	const [error, setError] = useState('');
+
+	// useEffect - runs after the App component is rendered on browser
+	useEffect(() => {
+		const abortCtlr = new AbortController();
+
+		// TODO: use pagination
+		const fetchMovies = async () => {
+			try {
+				setError('');
+				setIsLoading(true);
+
+				// get movies
+				const data = await getMovies(query, {
+					signal: abortCtlr.signal,
+				});
+
+				// check data.Search
+				if ('Response' in data && data.Response === 'False') {
+					throw new Error('No movie found on search.');
+				}
+
+				// in real-world, we should do checks on the response before setting the data
+				setMovies(data.Search);
+				setIsLoading(false);
+				setError('');
+			} catch (error) {
+				if (error.name !== 'AbortError') setError(error.message);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		if (query.length < 3) {
+			setMovies([]);
+			setError('');
+			return;
+		}
+
+		handleCloseMovie();
+		fetchMovies();
+
+		return () => {
+			abortCtlr.abort();
+		};
+	}, [query]);
+
+	const handleSelectedId = (movieId) => {
 		setSelectedId((selectedId) =>
 			movieId === selectedId ? null : movieId,
 		);
-	}
+	};
 
-	function handleCloseMovie() {
+	const handleCloseMovie = () => {
 		setSelectedId(null);
-	}
+	};
 
-	function handleSetWatched(watchedMovie) {
+	const handleSetWatched = (watchedMovie) => {
 		// perform an upsert
 		setWatched((movies, obj, key = 'imdbID') =>
-			movies.find((movie) => movie[key] === watchedMovie[key])
+			movies.some((movie) => movie[key] === watchedMovie[key])
 				? movies.map((m) =>
 						m[key] === watchedMovie[key]
-							? {
-									...m,
-									userRating: watchedMovie.userRating,
-									countRating: watchedMovie.countRating,
-								}
+							? { ...m, userRating: watchedMovie.userRating }
 							: m,
 					)
 				: [...movies, watchedMovie],
 		);
-	}
+	};
 
-	function handleDeleteWatched(imdbID) {
+	const handleDeleteWatched = (imdbID) => {
 		setWatched((watched) =>
 			watched.filter((movie) => movie.imdbID !== imdbID),
 		);
-	}
+	};
 
 	return (
 		<>
