@@ -20,7 +20,25 @@
 /08-how-react-works/node_modules
 /08-how-react-works/package-lock.json
 
-/08-classy-weather/node_modules
-/08-classy-weather/package-lock.json
+/09-classy-weather/node_modules
+/09-classy-weather/package-lock.json
+
+/10-react-quiz/node_modules
+/10-react-quiz/package-lock.json
+
+/11-world-wise/node_modules
+/11-world-wise/package-lock.json
+
+/12-atomic-blog/node_modules
+/12-atomic-blog/package-lock.json
+
+/13-workout-timer/node_modules
+/13-workout-timer/package-lock.json
+
+/14-redux-intro/node_modules
+/14-redux-intro/package-lock.json
+
+/15-fast-react-pizza/node_modules
+/15-fast-react-pizza/package-lock.json
 
 .DS_Store
