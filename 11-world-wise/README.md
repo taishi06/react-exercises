@@ -22,6 +22,19 @@ This helps able to create SPAs;
 
 Allows your project to use navigation links without refreshing the page.
 
+# Context API
+
+- Creating a Provider
+- Creating a Custom Hook Provider
+- Setting the Provider values
+- Using the Provider values on components
+
+# Additional Plugins
+
+- react-leaflet@4
+- leaflet
+- react-datepicker
+
 # CSSModules
 
 One external file per component
@@ -33,3 +46,8 @@ TailwindCSS
 # New Code Snippet Utility
 
 CSM - For CSS Modules component line code addition
+
+# JavaScript Native Functions
+
+- fetch
+- navigator
