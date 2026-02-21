@@ -1,4 +1,4 @@
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import styles from './City.module.css';
 import { useCities } from '../contexts/CitiesContext';
 import { useEffect } from 'react';
@@ -20,7 +20,7 @@ function City() {
 	// getCity(cityId);
 	useEffect(() => {
 		getCity(cityId);
-	}, [cityId]);
+	}, [cityId, getCity]);
 	const { emoji, cityName, date, notes } = currentCity;
 
 	// const lat = searchParams.get('lat');
