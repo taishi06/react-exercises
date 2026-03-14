@@ -43,6 +43,6 @@
 
 /16-the-wild-oasis/node_modules
 /16-the-wild-oasis/package-lock.json
-
+/16-the-wild-oasis/.env
 
 .DS_Store
