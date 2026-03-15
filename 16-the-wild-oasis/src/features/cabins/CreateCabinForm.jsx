@@ -7,11 +7,10 @@ import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 
 import { useForm } from 'react-hook-form';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createCabin } from '../../services/apiCabins';
-import toast from 'react-hot-toast';
+import FormRow from '../../ui/FormRow';
+import { useCreateCabin } from './useCreateCabin';
 
-const FormRow = styled.div`
+const StyledFormRow = styled.div`
 	display: grid;
 	align-items: center;
 	grid-template-columns: 24rem 1fr 1.2fr;
@@ -38,92 +37,146 @@ const FormRow = styled.div`
 	}
 `;
 
-const Label = styled.label`
-	font-weight: 500;
-`;
+function CreateCabinForm({ cabin = {}, handleShowForm }) {
+	const { id: cabinId, ...editValues } = cabin;
+	const isEditing = Boolean(cabinId);
 
-const Error = styled.span`
-	font-size: 1.4rem;
-	color: var(--color-red-700);
-`;
-
-function CreateCabinForm() {
-	const queryClient = useQueryClient();
-	const { register, handleSubmit, reset } = useForm();
-
-	const { isLoading: isCreating, mutate } = useMutation({
-		mutationFn: createCabin,
-		onSuccess: () => {
-			toast.success('Cabin has been successfully created.');
-			queryClient.invalidateQueries({ queryKey: ['cabins'] });
-			reset();
-		},
-		onError: (err) => toast.error(err.message),
+	const { register, handleSubmit, reset, getValues, formState } = useForm({
+		defaultValues: isEditing ? editValues : {},
 	});
+	const { errors } = formState;
+
+	const { isProcessing, createEditCabin } = useCreateCabin(isEditing);
 
 	function onSubmit(data) {
-		mutate(data);
+		const image =
+			typeof data?.image === 'string'
+				? data.image
+				: data.image instanceof FileList
+					? data.image[0]
+					: '';
+		createEditCabin(
+			isEditing
+				? { cabinData: { ...data, image }, id: cabinId }
+				: { ...data, image },
+			{
+				onSuccess: (data) => {
+					// console.log(data); - may return the response
+					reset();
+					handleShowForm((show) => !show);
+				},
+			},
+		);
 	}
 
 	return (
 		<Form onSubmit={handleSubmit(onSubmit)}>
-			<FormRow>
-				<Label htmlFor="name">Cabin name</Label>
-				<Input type="text" id="name" {...register('name')} />
+			<FormRow label="Name" error={errors?.name?.message}>
+				<Input
+					type="text"
+					id="name"
+					disabled={isProcessing}
+					{...register('name', {
+						required: 'This field is required',
+					})}
+				/>
 			</FormRow>
 
-			<FormRow>
-				<Label htmlFor="maxCapacity">Maximum capacity</Label>
+			<FormRow
+				label="Maximum Capacity"
+				error={errors?.maxCapacity?.message}
+			>
 				<Input
 					type="number"
 					id="maxCapacity"
-					{...register('maxCapacity')}
+					disabled={isProcessing}
+					{...register('maxCapacity', {
+						required: 'This field is required',
+						min: {
+							value: 1,
+							message: 'Capcity should be atleast 1.',
+						},
+					})}
 				/>
 			</FormRow>
 
-			<FormRow>
-				<Label htmlFor="regularPrice">Regular price</Label>
+			<FormRow
+				label="Regular Price"
+				error={errors?.regularPrice?.message}
+			>
 				<Input
 					type="number"
 					id="regularPrice"
-					{...register('regularPrice')}
+					disabled={isProcessing}
+					{...register('regularPrice', {
+						required: 'This field is required',
+						min: {
+							value: 1,
+							message: 'Capcity should be atleast 1.',
+						},
+					})}
 				/>
 			</FormRow>
 
-			<FormRow>
-				<Label htmlFor="discount">Discount</Label>
+			<FormRow label="Discount" error={errors?.discount?.message}>
 				<Input
 					type="number"
 					id="discount"
 					defaultValue={0}
-					{...register('discount')}
+					disabled={isProcessing}
+					{...register('discount', {
+						required: 'This field is required',
+						validate: (value) =>
+							Number(value) <=
+								Number(getValues('regularPrice')) ||
+							'Discount should be lower than Regular Price',
+					})}
 				/>
 			</FormRow>
 
-			<FormRow>
-				<Label htmlFor="description">Description for website</Label>
+			<FormRow
+				label="Description for Website"
+				error={errors?.description?.message}
+			>
 				<Textarea
 					type="number"
 					id="description"
+					disabled={isProcessing}
 					defaultValue=""
-					{...register('description')}
+					{...register('description', {
+						required: 'This field is required',
+					})}
 				/>
 			</FormRow>
 
-			<FormRow>
-				<Label htmlFor="image">Cabin photo</Label>
-				<FileInput id="image" accept="image/*" />
+			<FormRow label="Cabin Photo" error={false}>
+				<FileInput
+					id="image"
+					accept="image/*"
+					disabled={isProcessing}
+					{...register('image', {
+						required: isEditing ? false : 'This field is required',
+					})}
+				/>
 			</FormRow>
 
-			<FormRow>
+			<StyledFormRow>
 				{/* type is an HTML attribute! */}
-				<Button variation="secondary" type="reset">
+				<Button
+					variation="secondary"
+					type="reset"
+					disabled={isProcessing}
+				>
 					Reset
 				</Button>
-				<Button disabled={isCreating}>
-					{isCreating ? 'Adding Cabin...' : 'Add Cabin'}
+				<Button disabled={isProcessing}>
+					{isEditing
+						? 'Update Cabin'
+						: isProcessing
+							? 'Adding Cabin...'
+							: 'Add Cabin'}
 				</Button>
-			</FormRow>
+			</StyledFormRow>
 		</Form>
 	);
 }
