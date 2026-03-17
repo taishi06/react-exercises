@@ -37,7 +37,7 @@ const StyledFormRow = styled.div`
 	}
 `;
 
-function CreateCabinForm({ cabin = {}, handleShowForm }) {
+function CreateCabinForm({ cabin = {}, onCloseModal }) {
 	const { id: cabinId, ...editValues } = cabin;
 	const isEditing = Boolean(cabinId);
 
@@ -63,14 +63,17 @@ function CreateCabinForm({ cabin = {}, handleShowForm }) {
 				onSuccess: (data) => {
 					// console.log(data); - may return the response
 					reset();
-					handleShowForm((show) => !show);
+					onCloseModal?.();
 				},
 			},
 		);
 	}
 
 	return (
-		<Form onSubmit={handleSubmit(onSubmit)}>
+		<Form
+			onSubmit={handleSubmit(onSubmit)}
+			type={onCloseModal ? 'modal' : 'regular'}
+		>
 			<FormRow label="Name" error={errors?.name?.message}>
 				<Input
 					type="text"
@@ -166,8 +169,9 @@ function CreateCabinForm({ cabin = {}, handleShowForm }) {
 					variation="secondary"
 					type="reset"
 					disabled={isProcessing}
+					onClick={() => onCloseModal?.()}
 				>
-					Reset
+					Cancel
 				</Button>
 				<Button disabled={isProcessing}>
 					{isEditing
