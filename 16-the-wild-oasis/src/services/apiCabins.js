@@ -20,7 +20,7 @@ export async function createEditCabin(cabinData, id) {
 	);
 	const imagePath = hasImagePath
 		? cabinData.image
-		: `${supabaseUrl}/${import.meta.env.VITE_SUPABASE_STORAGE_PATH}/${imageName}`;
+		: `${supabaseUrl}/${import.meta.env.VITE_SUPABASE_STORAGE_PATH}/cabin-images/${imageName}`;
 	const submitData = { ...cabinData, image: imagePath };
 
 	let query = supabase.from('cabins');
