@@ -126,12 +126,13 @@ body {
 	font-size: 1.6rem;
 }
 
-input,
-button,
-textarea,
-select {
+select, button {
 	font: inherit;
 	color: inherit;
+}
+
+input, textarea {
+	font: inherit;
 }
 
 button {

@@ -5,7 +5,6 @@ import Input from '../../ui/Input';
 import Spinner from '../../ui/Spinner';
 import { useSettings } from './useSettings';
 import { useUpdateSettings } from './useUpdateSettings';
-import Button from '../../ui/Button';
 
 function UpdateSettingsForm() {
 	const {
@@ -18,7 +17,7 @@ function UpdateSettingsForm() {
 		} = {},
 	} = useSettings();
 
-	const { register, getValues, formState } = useForm({
+	const { getValues, formState } = useForm({
 		defaultValues: {
 			minBookingLength,
 			maxBookingLength,

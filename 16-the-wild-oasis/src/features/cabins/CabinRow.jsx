@@ -103,6 +103,7 @@ function CabinRow({ cabin }) {
 						<Menus.List id={cabinId}>
 							<Menus.Button
 								icon={<HiSquare2Stack />}
+								disabled={isProcessing}
 								onClick={handleDuplicate}
 							>
 								Duplicate

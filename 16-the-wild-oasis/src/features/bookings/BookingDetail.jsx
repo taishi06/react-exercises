@@ -16,7 +16,7 @@ import { useCheckout } from '../check-in-out/useCheckout';
 import Modal from '../../ui/Modal';
 import ConfirmDelete from '../../ui/ConfirmDelete';
 import { useDeleteBooking } from './useDeleteBooking';
-import toast from 'react-hot-toast';
+import Empty from '../../ui/Empty';
 
 const HeadingGroup = styled.div`
 	display: flex;
@@ -43,8 +43,9 @@ function BookingDetail() {
 	}
 
 	if (!booking) {
-		toast.error('The booking you are trying to view do not exist.');
-		navigate('/bookings');
+		return <Empty resource="booking" />;
+		// toast.error('The booking you are trying to view do not exist.');
+		// navigate('/bookings');
 	}
 
 	const { id: bookingId, status } = booking;

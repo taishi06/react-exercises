@@ -17,8 +17,13 @@ export function useCheckin() {
 		onSuccess: (data) => {
 			toast.success(`Booking #${data.id} successfully checked-in`);
 			// refresh all query / cache on the page
-			queryClient.invalidateQueries({ active: true });
-			navigate('/');
+			// queryClient.invalidateQueries({ active: true });
+			queryClient.invalidateQueries({
+				predicate: (query) => {
+					return query.queryKey[0] !== 'user';
+				},
+			});
+			navigate('/dashboard');
 		},
 		onError: () => toast.error('Error while checking in.'),
 	});
