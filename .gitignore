@@ -45,4 +45,6 @@
 /16-the-wild-oasis/package-lock.json
 /16-the-wild-oasis/.env
 
+/17-manual-ssr/node_modules
+
 .DS_Store
