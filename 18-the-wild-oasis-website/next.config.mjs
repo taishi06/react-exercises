@@ -10,6 +10,9 @@ const nextConfig = {
 			},
 		],
 	},
+	// will generate as static pages/assets
+	// do this if there are no dynamic pages
+	// output: 'export',
 };
 
 export default nextConfig;

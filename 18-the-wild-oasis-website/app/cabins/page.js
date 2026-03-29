@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import Spinner from '@/app/_components/Spinner';
 import CabinList from '../_components/CabinList';
+import Filter from '../_components/Filter';
+import ReservationReminder from '../_components/ReservationReminder';
 
 // page conventions
 export const metadata = {
@@ -8,7 +10,20 @@ export const metadata = {
 	title: 'Cabins',
 };
 
-export default function Page() {
+// automatic refresh of cache for data
+// export const revalidate = <time>;
+// export const revalidate = 15; // 15 seconds
+
+// entire page refresh page cache, will not partial render a dynamic component on the page
+// export const revalidate = 0;
+// export const dynamic = 'force-dynamic';
+
+// on-demand
+// revalidatePath or revalidateTag
+
+export default function Page({ searchParams }) {
+	const filter = searchParams?.capacity ?? 'all';
+
 	return (
 		<div>
 			<h1 className="text-4xl mb-5 text-accent-400 font-medium">
@@ -23,8 +38,14 @@ export default function Page() {
 				perfect spot for a peaceful, calm vacation. Welcome to paradise.
 			</p>
 
-			<Suspense fallback={<Spinner />}>
-				<CabinList />
+			<div className="flex justify-end mb-8">
+				<Filter />
+			</div>
+
+			{/* key is important if we want the effect of showing a loader on re-render since searchParams triggers re-render on URL change */}
+			<Suspense fallback={<Spinner />} key={filter}>
+				<CabinList filter={filter} />
+				<ReservationReminder />
 			</Suspense>
 		</div>
 	);
