@@ -52,4 +52,8 @@
 /18-the-wild-oasis-website/package-lock.json
 /18-the-wild-oasis-website/.env.local
 
+/19-nextjs-pages-router/node_modules
+/19-nextjs-pages-router/package-lock.json
+/19-nextjs-pages-router/.env.local
+
 .DS_Store
